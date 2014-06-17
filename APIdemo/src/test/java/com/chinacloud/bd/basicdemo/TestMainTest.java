@@ -1,13 +1,18 @@
 package com.chinacloud.bd.basicdemo;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
+import org.elasticsearch.common.collect.Lists;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import com.google.common.base.Joiner;
+import com.google.common.base.Splitter;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 
@@ -30,11 +35,19 @@ public class TestMainTest {
     }
 
     @Test
-    @Ignore
     public void test() {
 
-        TestMain.main(null);
-        System.out.println("test in test");
+        // String str = String.format("格式参数$的使用：,%2$s,%1$d", 99, "abc");
+        // System.out.println(str);
+        // String id = "123,234,345";
+        String id = "123";
+
+        Iterable<String> split = Splitter.on(",").split(id);
+        ArrayList<String> list = Lists.newArrayList(split);
+
+        for (String string : list) {
+            System.out.println("list: " + string);
+        }
 
     }
 
@@ -42,6 +55,15 @@ public class TestMainTest {
     public void testTTTT() {
 
         System.out.println("test in test");
+        List<String> names = Lists.newArrayList();
+
+        names.add("hello1");
+        // names.add("hello2");
+        // names.add("hello3");
+
+        String parameter = Joiner.on(",").join(names);
+
+        System.out.println("test in test: " + parameter);
 
     }
 
