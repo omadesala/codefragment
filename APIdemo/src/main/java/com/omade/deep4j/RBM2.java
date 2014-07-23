@@ -2,7 +2,7 @@ package com.omade.deep4j;
 
 import java.util.Random;
 
-public class RBM {
+public class RBM2 {
     public int N;
     public int n_visible;
     public int n_hidden;
@@ -35,7 +35,7 @@ public class RBM {
         return 1.0 / (1.0 + Math.pow(Math.E, -x));
     }
 
-    public RBM(int N, int n_visible, int n_hidden, double[][] W, double[] hbias, double[] vbias, Random rng) {
+    public RBM2(int N, int n_visible, int n_hidden, double[][] W, double[] hbias, double[] vbias, Random rng) {
         this.N = N;
         this.n_visible = n_visible;
         this.n_hidden = n_hidden;
@@ -51,7 +51,8 @@ public class RBM {
 
             for (int i = 0; i < this.n_hidden; i++) {
                 for (int j = 0; j < this.n_visible; j++) {
-                    this.W[i][j] = uniform(-a, a);
+                    // this.W[i][j] = uniform(-a, a);
+                    this.W[i][j] = 0.;
                 }
             }
         } else {
@@ -100,15 +101,19 @@ public class RBM {
                 // W[i][j] += lr * (ph_sample[i] * input[j] - nh_means[i] *
                 // nv_samples[j]) / N;
 
-                W[i][j] += lr * (ph_mean[i] * input[j] - nh_means[i] * nv_samples[j]) / N;
+                W[i][j] += lr * (ph_mean[i] * input[j] - nh_means[i] * nv_samples[j]);
+                // W[i][j] += lr * (ph_mean[i] * input[j] - nh_means[i] *
+                // nv_samples[j]) / N;
             }
 
-            hbias[i] += lr * (ph_sample[i] - nh_means[i]) / N;
+            hbias[i] += lr * (ph_sample[i] - nh_means[i]);
+            // hbias[i] += lr * (ph_sample[i] - nh_means[i]) / N;
         }
 
         for (int i = 0; i < n_visible; i++) {
 
-            vbias[i] += lr * (input[i] - nv_samples[i]) / N;
+            vbias[i] += lr * (input[i] - nv_samples[i]);
+            // vbias[i] += lr * (input[i] - nv_samples[i]) / N;
         }
 
     }
@@ -207,7 +212,8 @@ public class RBM {
         Random rng = new Random(123);
 
         double learning_rate = 0.1;
-        int training_epochs = 1000;
+        // int training_epochs = 1000;
+        int training_epochs = 10;
         int k = 1;
 
         int train_N = 6;
@@ -219,17 +225,20 @@ public class RBM {
         // int[][] train_X = { { 1, 1, 1, 0, 0, 0 }, { 1, 0, 1, 0, 0, 0 }, { 1,
         // 1, 1, 0, 0, 0 }, { 0, 0, 1, 1, 1, 0 },
         // { 0, 0, 1, 0, 1, 0 }, { 0, 0, 1, 1, 1, 0 } };
+
         int[][] train_X = { { 1, 1, 1, 0, 0, 0 }, { 1, 0, 1, 0, 0, 0 }, { 1, 1, 1, 0, 0, 0 }, { 0, 0, 1, 1, 1, 0 },
                 { 0, 0, 1, 1, 0, 0 }, { 0, 0, 1, 1, 1, 0 }, { 0, 0, 1, 1, 1, 0 } };
 
-        RBM rbm = new RBM(train_N, n_visible, n_hidden, null, null, null, rng);
+        RBM2 rbm = new RBM2(train_N, n_visible, n_hidden, null, null, null, rng);
 
         // train
         for (int epoch = 0; epoch < training_epochs; epoch++) {
-
             for (int i = 0; i < train_N; i++) {
                 rbm.contrastive_divergence(train_X[i], learning_rate, k);
             }
+
+            System.out.println("train opoch:" + epoch);
+            printParameter(rbm);
         }
 
         // test data
@@ -255,7 +264,33 @@ public class RBM {
         }
 
         // print parameter
+        printParameter(rbm);
 
+    }
+
+    private static void printParameter(RBM2 rbm) {
+        printW(rbm);
+        printA(rbm);
+        printB(rbm);
+    }
+
+    private static void printB(RBM2 rbm) {
+        System.out.println("");
+        System.out.println("B bias for hidden layer");
+        for (int i = 0; i < rbm.n_hidden; i++) {
+            System.out.print("   " + rbm.hbias[i]);
+        }
+    }
+
+    private static void printA(RBM2 rbm) {
+        System.out.println("");
+        System.out.println("A bias for visible layer");
+        for (int i = 0; i < rbm.n_visible; i++) {
+            System.out.print("   " + rbm.vbias[i]);
+        }
+    }
+
+    private static void printW(RBM2 rbm) {
         System.out.println("W");
         for (int i = 0; i < rbm.n_hidden; i++) {
             for (int j = 0; j < rbm.n_visible; j++) {
@@ -263,18 +298,6 @@ public class RBM {
             }
             System.out.println("");
         }
-        System.out.println("");
-        System.out.println("A bias for visible layer");
-        for (int i = 0; i < rbm.n_visible; i++) {
-            System.out.print("   " + rbm.vbias[i]);
-        }
-
-        System.out.println("");
-        System.out.println("B bias for hidden layer");
-        for (int i = 0; i < rbm.n_hidden; i++) {
-            System.out.print("   " + rbm.hbias[i]);
-        }
-
     }
 
     public static void main(String[] args) {

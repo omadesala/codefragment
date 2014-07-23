@@ -1,5 +1,7 @@
 package com.chinacloud.bd.jblasdemo;
 
+import java.lang.invoke.VolatileCallSite;
+
 import org.jblas.DoubleMatrix;
 import org.junit.After;
 import org.junit.Before;
@@ -7,10 +9,15 @@ import org.junit.Test;
 
 public class TestJBlas {
 
+    volatile int j = 0;
+
     @Before
     public void setUp() throws Exception {
 
         System.out.println("setUp");
+
+        j = j++;
+        System.out.println("j=" + j);
     }
 
     @After
@@ -25,6 +32,7 @@ public class TestJBlas {
 
     @Test
     public void test() {
+        System.out.println("j2=" + j);
 
         System.out.println("test in test");
         // DoubleMatrix m1 = new DoubleMatrix();
