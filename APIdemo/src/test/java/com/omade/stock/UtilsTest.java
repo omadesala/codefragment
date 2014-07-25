@@ -20,7 +20,7 @@ public class UtilsTest {
     public void testparseDate() {
 
         String dateStr = "2009-06-08";
-        Date parseDate = Utils.parseDate(dateStr);
+        Date parseDate = Utils.parseStr2Date(dateStr);
         System.out.println("date is: " + parseDate.toString());
     }
 }

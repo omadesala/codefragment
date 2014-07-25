@@ -2,7 +2,6 @@ package com.omade.stock;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
@@ -12,10 +11,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.joda.time.DateTime;
+
 import com.chinacloud.blackhole.db.DBPojo;
 import com.chinacloud.blackhole.db.MySqlManager;
 
-public class YahooStockUtil {
+public class YahooStock {
 
     public static MySqlManager mysql;
     public static DBPojo db;
@@ -132,7 +133,7 @@ public class YahooStockUtil {
      * 测试
      */
     public static void main(String[] args) {
-        YahooStockUtil stockUtil = new YahooStockUtil();
+        YahooStock stockUtil = new YahooStock();
         // StockData sd = stockUtil.getStockCsvData("600629.ss", "2012-12-31");
         // System.out.println(sd.toString());
         // StockData sd = stockUtil.getStockCsvData("vips", "2014-07-15");
@@ -140,10 +141,24 @@ public class YahooStockUtil {
         storage.connect();
 
         String tableName = "vips";
+
+        System.out.println("111111 last day start: ");
+        Date lastRecordDate = storage.getLastRecordByColumn(tableName);
+
+        System.out.println("111111 last day: " + Utils.parseDate2Str(lastRecordDate));
+
+        DateTime dt = new DateTime(lastRecordDate);
+        DateTime plusDays = dt.plusDays(1);
+
         int loopcount = 0;
         List<StockData> stockCsvData = null;
         do {
-            stockCsvData = stockUtil.getStockCsvData("VIPS", "2013-11-15", "2014-07-15");
+            String parseDate2Str = Utils.parseDate2Str(plusDays.toDate());
+            System.out.println("last day: " + parseDate2Str);
+            String today = Utils.parseDate2Str(new Date());
+            System.out.println("today: " + today);
+
+            stockCsvData = stockUtil.getStockCsvData("VIPS", parseDate2Str, today);
             if (loopcount > 0) {
                 try {
                     Thread.sleep(1000);
@@ -163,36 +178,6 @@ public class YahooStockUtil {
         }
 
         storage.close();
-
-        // for (int i = 0; i < 15; i++) {
-        //
-        // int loopcount = 0;
-        // List<StockData> stockCsvData = null;
-        // do {
-        // stockCsvData = stockUtil.getStockCsvData("VIPS", "2013-11-15",
-        // "2014-07-15");
-        // } while (stockCsvData == null && loopcount++ < 3);
-        //
-        // if (stockCsvData == null) {
-        // failcount++;
-        // System.out.println("test" + i + " failed");
-        //
-        // } else {
-        // failcount = 1;
-        // System.out.println("test" + i + " succeed");
-        // }
-        // try {
-        // Thread.sleep(1000 * failcount);
-        // } catch (InterruptedException e) {
-        //
-        // e.printStackTrace();
-        //
-        // }
-        // }
-
-        // for (StockData stockData : stockCsvData) {
-        // System.out.println(stockData.toString());
-        // }
 
     }
 }
