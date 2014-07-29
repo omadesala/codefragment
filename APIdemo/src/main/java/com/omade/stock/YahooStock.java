@@ -142,10 +142,7 @@ public class YahooStock {
 
         String tableName = "vips";
 
-        System.out.println("111111 last day start: ");
         Date lastRecordDate = storage.getLastRecordByColumn(tableName);
-
-        System.out.println("111111 last day: " + Utils.parseDate2Str(lastRecordDate));
 
         DateTime dt = new DateTime(lastRecordDate);
         DateTime plusDays = dt.plusDays(1);
@@ -180,4 +177,11 @@ public class YahooStock {
         storage.close();
 
     }
+
+    public List<StockData> readData(String tableName, Date from, int length) {
+        List<StockData> records = storage.getRecord(tableName, Utils.parseStr2Date("2013-07-26"), 3);
+        Utils.printInfo(records);
+        return records;
+    }
+
 }

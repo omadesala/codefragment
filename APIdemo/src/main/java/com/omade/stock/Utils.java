@@ -2,20 +2,22 @@ package com.omade.stock;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Collection;
 import java.util.Date;
+import java.util.Iterator;
+
+import org.apache.commons.lang.time.DateFormatUtils;
+import org.apache.commons.lang.time.FastDateFormat;
 
 public class Utils {
 
     public static Date parseStr2Date(String dateStr) {
 
-        // DateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
-
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        DateFormat format1 = sdf;
+        FastDateFormat fdf = DateFormatUtils.ISO_DATE_FORMAT;
+        SimpleDateFormat sdf = new SimpleDateFormat(fdf.getPattern());
         Date date = null;
         try {
             date = sdf.parse(dateStr);
-            System.out.println(date.toLocaleString());
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -24,22 +26,21 @@ public class Utils {
     }
 
     public static String parseDate2Str(Date date) {
-        //
-        // DateFormat format1 = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-        // DateFormat format2 = new SimpleDateFormat("yyyy-MM-dd");
-        // DateFormat format3 = new SimpleDateFormat("h:mm a");
-        // DateFormat format4 = new
-        // SimpleDateFormat("yyyy.MM.dd G 'at' HH:mm:ss z");
-        // DateFormat format5 = new SimpleDateFormat("EEE, MMM, dd, ''yyyy");
-        // DateFormat format6 = new
-        // SimpleDateFormat("yyyy.MM.dd kk:mm 'o''clock' a, zzzz");
-        // DateFormat format7 = new
-        // SimpleDateFormat("yyyyy.MMMMM.dd GGG hh:mm aaa");
 
-        DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        FastDateFormat fdf = DateFormatUtils.ISO_DATE_FORMAT;
+        DateFormat format = new SimpleDateFormat(fdf.getPattern());
         String dateStr = format.format(date);
 
         return dateStr;
+    }
+
+    public static void printInfo(Collection<?> collection) {
+
+        Iterator<?> iterator = collection.iterator();
+        while (iterator.hasNext()) {
+            System.out.println(iterator.next().toString());
+        }
+
     }
 
 }

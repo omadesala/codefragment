@@ -39,4 +39,9 @@ public class StorageTest {
         storage.getLastRecordByColumn("vips");
     }
 
+    @Test
+    public void testGetByDateLength() {
+
+    }
+
 }
