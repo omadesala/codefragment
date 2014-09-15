@@ -11,7 +11,7 @@ public class BaumWelch {
     int N; // 输出活动的种数
     double[] PI; // 初始状态概率矩阵
     double[][] A; // 状态转移矩阵
-    double[][] B; // 混淆矩阵
+    double[][] B; // 混淆矩阵 
 
     ArrayList<Integer> observation = new ArrayList<Integer>(); // 观察到的集合
     ArrayList<Integer> state = new ArrayList<Integer>(); // 中间状态集合
