@@ -3,6 +3,8 @@ package com.omade.optimize;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import javax.imageio.ImageIO;
@@ -10,21 +12,23 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
-import org.netlib.util.intW;
-
 import math.jwave.Transform;
 import math.jwave.exceptions.JWaveException;
 import math.jwave.exceptions.JWaveFailure;
 import math.jwave.transforms.FastWaveletTransform;
 import math.jwave.transforms.wavelets.symlets.Symlet15;
 
+import com.google.gson.internal.Pair;
+
 public class PGDLena implements OptimizationProblem {
 
-    private static Random rng = new Random();
-    private static int width;
+    static int width;
     private static int height;
     private static double[] img_fwt;
     private static double[][] img_fwt_2d;
+    private static Random rng = new Random();
+
+    // ////////////
 
     public static void main(String[] args) {
 
@@ -61,7 +65,7 @@ public class PGDLena implements OptimizationProblem {
                 img_fwt_2d = t.forward(array2dToDouble(arrayNoise2D, width,
                         height));
 
-                int[][] col = array2dToInt(img_fwt_2d, width, height);
+                int[][] col = IntArray2D(img_fwt_2d, width, height);
                 // int[][] col = new int[width][height];
 
                 for (int i = 0; i < height; i++) {
@@ -71,10 +75,10 @@ public class PGDLena implements OptimizationProblem {
                     }
                 }
 
-                bufImage.setRGB(0, 0, width, height,
-                        array2dflatInt(col, width, height), 0, width);
-                JLabel label1 = new JLabel(new ImageIcon(bufImage));
-                app.add(label1);
+                // bufImage.setRGB(0, 0, width, height,
+                // array2dflatInt(col, width, height), 0, width);
+                // JLabel label1 = new JLabel(new ImageIcon(bufImage));
+                // app.add(label1);
 
                 double[][] reverse = t.reverse(img_fwt_2d);
 
@@ -86,26 +90,23 @@ public class PGDLena implements OptimizationProblem {
                 // int[] diff = new int[reverse.length];
                 int[][] diff = new int[width][height];
 
-                // for (int i = 0; i < width; i++) {
-                // for (int j = 0; j < height; j++) {
-                //
-                // diff[i][j] = (int) reverse[i][j] - arrayNoise2D[i][j];
-                // recv[i][j] = (int) reverse[i][j];
-                // }
-                // }
+                int[][] ori = getArray2D(read);
+
+                for (int i = 0; i < width; i++) {
+                    for (int j = 0; j < height; j++) {
+
+                        diff[i][j] = (int) reverse[i][j] - ori[i][j];
+                        recv[i][j] = (int) reverse[i][j];
+                    }
+                }
 
                 System.out.println("this is the recved image ");
 
                 // bufImage.setRGB(0, 0, width, height, diff, 0, width);
-                // bufImage.setRGB(
-                // 0,
-                // 0,
-                // width,
-                // height,
-                // array2dflatInt(array2dToInt(reverse, width, height),
-                // width, height), 0, width);
-                // JLabel label1 = new JLabel(new ImageIcon(bufImage));
-                // app.add(label1);
+                bufImage.setRGB(0, 0, width, height,
+                        array2dflatInt(diff, width, height), 0, width);
+                JLabel label1 = new JLabel(new ImageIcon(bufImage));
+                app.add(label1);
 
             } catch (JWaveFailure e) {
                 e.printStackTrace();
@@ -172,7 +173,7 @@ public class PGDLena implements OptimizationProblem {
         return array;
     }
 
-    public static double[] array1dTodDouble(int[] array1D, int length) {
+    public static double[] doubleArray1D(int[] array1D, int length) {
 
         double[] array = new double[length];
 
@@ -195,7 +196,7 @@ public class PGDLena implements OptimizationProblem {
         return array;
     }
 
-    public static int[][] array2dToInt(double[][] array2D, int width, int height) {
+    public static int[][] IntArray2D(double[][] array2D, int width, int height) {
         int[][] array = new int[width][height];
 
         for (int i = 0; i < height; i++) {
@@ -322,4 +323,55 @@ public class PGDLena implements OptimizationProblem {
     public double[] projection() {
         return null;
     }
+
+    /**
+     * f+表示函数f的正部，f-表示函数f的负部<br/>
+     * 比如取f(x)=x, -2<x<2 则 当0<x<2时，f+(x)=x, 当-2<x<0时，f+(x)=0, 则 当0<x<2时，f-(x)=0,
+     * 当-2<x<0时，f+(x)=-x,
+     */
+    public double absfuncX(double inputX) {
+
+        double funcPos = Math.max(inputX, 0);
+        double funcNeg = Math.max(-inputX, 0);
+
+        System.out.println("funcPos: " + funcPos + " funcNeg: " + funcNeg);
+
+        return funcPos + funcNeg;
+
+    }
+
+    public Pair<Double, Double> splitX(double inputX) {
+
+        double funcPos = Math.max(inputX, 0);
+        double funcNeg = Math.max(-inputX, 0);
+
+        System.out.println("funcPos: " + funcPos + " funcNeg: " + funcNeg);
+        Pair<Double, Double> ret = new Pair<Double, Double>(funcPos, funcNeg);
+
+        return ret;
+
+    }
+
+    public List<Pair<Double, Double>> splitX(Double[] inputX, int length) {
+
+        List<Pair<Double, Double>> ret = new ArrayList<Pair<Double, Double>>();
+
+        for (int i = 0; i < length; i++) {
+
+            double funcPos = Math.max(inputX[i], 0);
+            double funcNeg = Math.max(-inputX[i], 0);
+            // System.out.println("funcPos: " + funcPos + " funcNeg: " +
+            // funcNeg);
+            Pair<Double, Double> retpoint = new Pair<Double, Double>(funcPos,
+                    funcNeg);
+            ret.add(retpoint);
+        }
+
+        return ret;
+
+    }
+
+    // private double splitX(double inputX) {
+    //
+    // }
 }
