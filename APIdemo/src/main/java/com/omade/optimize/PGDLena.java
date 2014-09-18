@@ -16,7 +16,7 @@ import math.jwave.Transform;
 import math.jwave.exceptions.JWaveException;
 import math.jwave.exceptions.JWaveFailure;
 import math.jwave.transforms.FastWaveletTransform;
-import math.jwave.transforms.wavelets.symlets.Symlet15;
+import math.jwave.transforms.wavelets.symlets.Symlet5;
 
 import com.google.gson.internal.Pair;
 
@@ -54,8 +54,9 @@ public class PGDLena implements OptimizationProblem {
                 // arrayNoise = filter(read);
                 arrayNoise2D = filter(getArray1D(read), width * height);
 
+                // arrayNoise2D = getArray2D(read);
                 Transform t = new Transform(new FastWaveletTransform(
-                        new Symlet15()));
+                        new Symlet5()));
 
                 // for (int i = 0; i < imgarr.length; i++) {
                 // imgarr[i] = (double) arrayNoise[i];
@@ -65,15 +66,32 @@ public class PGDLena implements OptimizationProblem {
                 img_fwt_2d = t.forward(array2dToDouble(arrayNoise2D, width,
                         height));
 
+                for (int i = 0; i < height; i++) {
+                    for (int j = 0; j < width; j++) {
+                        if (Math.abs(img_fwt_2d[i][j]) < 1e3) {
+                             img_fwt_2d[i][j] = 0.;
+                        }
+                    }
+                }
+
                 int[][] col = IntArray2D(img_fwt_2d, width, height);
                 // int[][] col = new int[width][height];
 
-                for (int i = 0; i < height; i++) {
-                    for (int j = 0; j < width; j++) {
+                // int colmax = 0;
+                // for (int i = 0; i < height; i++) {
+                // for (int j = 0; j < width; j++) {
+                // if (col[i][j] > colmax) {
+                // colmax = col[i][j];
+                // }
+                // }
+                // }
 
-                        col[i][j] = col[i][j] % 256;
-                    }
-                }
+                // for (int i = 0; i < height; i++) {
+                // for (int j = 0; j < width; j++) {
+                //
+                // col[i][j] = (int) (col[i][j] / 256.);
+                // }
+                // }
 
                 // bufImage.setRGB(0, 0, width, height,
                 // array2dflatInt(col, width, height), 0, width);
@@ -104,9 +122,11 @@ public class PGDLena implements OptimizationProblem {
 
                 // bufImage.setRGB(0, 0, width, height, diff, 0, width);
                 bufImage.setRGB(0, 0, width, height,
-                        array2dflatInt(diff, width, height), 0, width);
+                        array2dflatInt(recv, width, height), 0, width);
                 JLabel label1 = new JLabel(new ImageIcon(bufImage));
                 app.add(label1);
+                // JLabel label2 = new JLabel(new ImageIcon(read));
+                // app.add(label2);
 
             } catch (JWaveFailure e) {
                 e.printStackTrace();
