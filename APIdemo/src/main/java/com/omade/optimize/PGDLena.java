@@ -22,7 +22,7 @@ import com.google.gson.internal.Pair;
 
 public class PGDLena implements OptimizationProblem {
 
-    static int width;
+    private static int width;
     private static int height;
     private static double[] img_fwt;
     private static double[][] img_fwt_2d;
@@ -69,7 +69,7 @@ public class PGDLena implements OptimizationProblem {
                 for (int i = 0; i < height; i++) {
                     for (int j = 0; j < width; j++) {
                         if (Math.abs(img_fwt_2d[i][j]) < 1e3) {
-                             img_fwt_2d[i][j] = 0.;
+                            img_fwt_2d[i][j] = 0.;
                         }
                     }
                 }
