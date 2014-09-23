@@ -658,4 +658,24 @@ public class MatrixUtils {
 
         return ComplexMatrix.valueOf(dataComplexs);
     }
+
+    public static Matrix zeroRow(int size) {
+
+        Preconditions.checkArgument(size > 0, "size  should greate than zero ");
+        Matrix vector = new Matrix(1, size);
+
+        return vector;
+    }
+
+    public static Matrix oneRow(int size) {
+
+        Preconditions.checkArgument(size > 0, "size  should greate than zero ");
+        Matrix vector = new Matrix(1, size);
+
+        for (int i = 0; i < vector.getColumnDimension(); i++) {
+            vector.set(0, i, 1);
+        }
+
+        return vector;
+    }
 }

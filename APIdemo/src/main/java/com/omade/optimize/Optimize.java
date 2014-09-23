@@ -3,18 +3,22 @@ package com.omade.optimize;
 import java.util.List;
 
 import org.netlib.util.doubleW;
+import org.openxmlformats.schemas.drawingml.x2006.main.ThemeDocument;
 
+import Jama.Matrix;
+
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
-public class Optimize {
+public class Optimize<T> {
 
     private static String direction = "gradient";
     private static String stepsize = "wolfe";
     private static String stepsize_ap = "wolfe";
     private static int maxiter = 100;
-    private static double xTol = 1e-15;
-    private static double fTol = 1e-5;
-    private static double gTol = 1e-5;
+    private static Double xTol = 1e-15;
+    private static Double fTol = 1e-5;
+    private static Double gTol = 1e-5;
 
     private static boolean verbose = false;
     private static boolean store_x = false;
@@ -25,11 +29,14 @@ public class Optimize {
 
     private static boolean do_projection = false;
 
-    private static List<Double> x = Lists.newArrayList();
-    private static List<Double> f = Lists.newArrayList();
-    private static List<Double> g = Lists.newArrayList();
+    // private static List<Double> x = Lists.newArrayList();
+    // private static List<Double> f = Lists.newArrayList();
+    // private static List<Double> g = Lists.newArrayList();
 
-    private OptimizationProblem optimizer = null;
+    private OptimizationFunction function = null;
+    private WorkingSet ws = null;
+    // private WorkingSet<Double> ws = new WorkingSet<Double>();
+
     private int dimension = 0;
 
     public Optimize() {
@@ -38,7 +45,7 @@ public class Optimize {
 
     public Optimize(Builder builder) {
 
-        this.optimizer = builder.getOptimizer();
+        this.function = builder.getOptimizer();
         this.direction = builder.getDirection();
         this.stepsize = builder.getStepsize();
         this.stepsize_ap = builder.getStepsize_ap();
@@ -57,11 +64,29 @@ public class Optimize {
 
         this.do_projection = builder.isDo_projection();
 
-        this.dimension = optimizer.dimension();
+        this.dimension = function.dimension();
 
     }
 
-    public void Optimize() {
+    public void Optimize(Matrix data) {
+
+        Preconditions.checkArgument(MatrixUtils.isRow(data),
+                "the input data should be a row vector");
+
+        ws = new WorkingSet();
+
+        ws.x = data;
+        ws.x_prev = MatrixUtils.zeroRow(data.getColumnDimension());
+
+        ws.g = MatrixUtils.zeroRow(data.getColumnDimension());
+        ws.g_prev = MatrixUtils.zeroRow(data.getColumnDimension());
+
+        ws.f = function.objval(ws.x);
+        ws.f_prev = 0.;
+
+        ws.d = MatrixUtils.zeroRow(data.getColumnDimension());
+        ws.t = 0.;
+        ws.iter = 0;
 
         if (this.direction.equals("")) {
 
@@ -118,7 +143,7 @@ public class Optimize {
 
     public static class Builder {
 
-        private OptimizationProblem optimizer = null;
+        private OptimizationFunction optimizer = null;
         private static String direction = "gradient";
         private static String stepsize = "wolfe";
         private static String stepsize_ap = "wolfe";
@@ -189,11 +214,11 @@ public class Optimize {
             Builder.gTol = gTol;
         }
 
-        public OptimizationProblem getOptimizer() {
+        public OptimizationFunction getOptimizer() {
             return optimizer;
         }
 
-        public void setOptimizer(OptimizationProblem optimizer) {
+        public void setOptimizer(OptimizationFunction optimizer) {
             this.optimizer = optimizer;
         }
 

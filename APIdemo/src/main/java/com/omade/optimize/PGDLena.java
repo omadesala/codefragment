@@ -20,7 +20,7 @@ import math.jwave.transforms.wavelets.symlets.Symlet5;
 
 import com.google.gson.internal.Pair;
 
-public class PGDLena implements OptimizationProblem {
+public class PGDLena implements OptimizationFunction {
 
     private static int width;
     private static int height;
