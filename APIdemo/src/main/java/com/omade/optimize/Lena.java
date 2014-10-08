@@ -21,7 +21,7 @@ import Jama.Matrix;
 
 import com.google.gson.internal.Pair;
 
-public class PGDLena implements OptimizationFunction {
+public class Lena implements OptimizationFunction {
 
     private static int width;
     private static int height;
@@ -73,28 +73,6 @@ public class PGDLena implements OptimizationFunction {
                 }
 
                 int[][] col = IntArray2D(img_fwt_2d, width, height);
-                // int[][] col = new int[width][height];
-
-                // int colmax = 0;
-                // for (int i = 0; i < height; i++) {
-                // for (int j = 0; j < width; j++) {
-                // if (col[i][j] > colmax) {
-                // colmax = col[i][j];
-                // }
-                // }
-                // }
-
-                // for (int i = 0; i < height; i++) {
-                // for (int j = 0; j < width; j++) {
-                //
-                // col[i][j] = (int) (col[i][j] / 256.);
-                // }
-                // }
-
-                // bufImage.setRGB(0, 0, width, height,
-                // array2dflatInt(col, width, height), 0, width);
-                // JLabel label1 = new JLabel(new ImageIcon(bufImage));
-                // app.add(label1);
 
                 double[][] reverse = t.reverse(img_fwt_2d);
 

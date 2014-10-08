@@ -13,4 +13,8 @@ public interface OptimizationFunction {
     double linesearch();
 
     double[] projection();
+
+    double[] objval();
+
+    double[] gradient();
 }

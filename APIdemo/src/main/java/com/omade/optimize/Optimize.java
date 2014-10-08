@@ -29,13 +29,8 @@ public class Optimize<T> {
 
     private static boolean do_projection = false;
 
-    // private static List<Double> x = Lists.newArrayList();
-    // private static List<Double> f = Lists.newArrayList();
-    // private static List<Double> g = Lists.newArrayList();
-
     private OptimizationFunction function = null;
     private WorkingSet ws = null;
-    // private WorkingSet<Double> ws = new WorkingSet<Double>();
 
     private int dimension = 0;
 
@@ -70,8 +65,7 @@ public class Optimize<T> {
 
     public void Optimize(Matrix data) {
 
-        Preconditions.checkArgument(MatrixUtils.isRow(data),
-                "the input data should be a row vector");
+        Preconditions.checkArgument(MatrixUtils.isRow(data), "the input data should be a row vector");
 
         ws = new WorkingSet();
 

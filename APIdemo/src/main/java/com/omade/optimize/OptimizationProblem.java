@@ -1,15 +1,16 @@
 package com.omade.optimize;
 
+import org.jblas.DoubleMatrix;
 
 public interface OptimizationProblem {
 
     int dimension();
 
-    double[] objval();
+    double objval(DoubleMatrix x);
 
-    double[] gradient();
+    DoubleMatrix gradient(DoubleMatrix x);
 
     double linesearch();
 
-    double[] projection();
+    DoubleMatrix projection(DoubleMatrix data);
 }
