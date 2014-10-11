@@ -14,7 +14,7 @@ import cc.mallet.optimize.Optimizable;
 import com.google.common.base.Preconditions;
 import com.omade.optimize.FunctionUtils;
 
-public class OptimizerLena implements Optimizable.ByGradientValue {
+public class OptimizerSample implements Optimizable.ByGradientValue {
 
     // Optimizables encapsulate all state variables,
     // so a single Optimizer object can be used to optimize
@@ -23,11 +23,11 @@ public class OptimizerLena implements Optimizable.ByGradientValue {
     private DoubleMatrix img;// one dim
     private DoubleMatrix imgFwt;// one dim
 
-    private double[] parameters;
+    // private double[] parameters;
     private DoubleMatrix param;
     private double lambda = 0.1;
 
-    public OptimizerLena() {
+    public OptimizerSample() {
 
     }
 
@@ -35,34 +35,36 @@ public class OptimizerLena implements Optimizable.ByGradientValue {
 
         // double x = parameters[0];
         // double y = parameters[1];
+        double x = param.get(0);
+        double y = param.get(1);
+        return -3 * x * x - 4 * y * y + 2 * x - 4 * y + 18;
+
+        // double[] recoverImage = recoverImage(imgFwt);
+        // DoubleMatrix recoverMatrix = new DoubleMatrix(recoverImage);
+        // DoubleMatrix diff = recoverMatrix.sub(img);
         //
-        // return -3 * x * x - 4 * y * y + 2 * x - 4 * y + 18;
-
-        double[] recoverImage = recoverImage(imgFwt);
-        DoubleMatrix recoverMatrix = new DoubleMatrix(recoverImage);
-        DoubleMatrix diff = recoverMatrix.sub(img);
-
-        double dot = -(diff.dot(diff) + lambda * imgFwt.sum());
-        return dot;
+        // double dot = diff.dot(diff) + lambda * imgFwt.sum();;
+        // return dot;
 
     }
 
     public void getValueGradient(double[] gradient) {
 
-        // gradient[0] = -6 * parameters[0] + 2;
-        // gradient[1] = -8 * parameters[1] - 4;
+        gradient[0] = -6 * param.get(0) + 2;
+        gradient[1] = -8 * param.get(1) - 4;
 
-        DoubleMatrix absX = absX(this.param);
-        DoubleMatrix xComb = DoubleMatrix.zeros(absX.length, 2);
-
-        xComb.putColumn(0, absX);
-        xComb.putColumn(1, absX);
-
-        DoubleMatrix result = xComb.sub(imgFwt).mul(2.0).add(DoubleMatrix.ones(dimension()).mul(lambda));
-
-        for (int i = 0; i < gradient.length; i++) {
-            gradient[i] = -result.get(i);
-        }
+        // DoubleMatrix absX = absX(this.param);
+        // DoubleMatrix xComb = DoubleMatrix.zeros(absX.length, 2);
+        //
+        // xComb.putColumn(0, absX);
+        // xComb.putColumn(1, absX);
+        //
+        // DoubleMatrix result =
+        // xComb.sub(imgFwt).mul(2.0).add(DoubleMatrix.ones(dimension()).mul(lambda));
+        //
+        // for (int i = 0; i < gradient.length; i++) {
+        // gradient[i] = result.get(i);
+        // }
 
     }
 

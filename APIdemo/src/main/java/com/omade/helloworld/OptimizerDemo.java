@@ -9,7 +9,8 @@ public class OptimizerDemo {
 
     public static void main(String[] args) {
 
-        OptimizerLena optimizable = new OptimizerLena();
+        OptimizerSample optimizable = new OptimizerSample();
+        // OptimizerLena optimizable = new OptimizerLena();
 
         optimizable.setParam(DoubleMatrix.rand(2));
         // Optimizer optimizer = new LimitedMemoryBFGS(optimizable);

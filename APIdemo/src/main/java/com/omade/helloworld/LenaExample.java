@@ -3,15 +3,12 @@ package com.omade.helloworld;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.Random;
 
 import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
 
 import math.jwave.Transform;
 import math.jwave.exceptions.JWaveException;
-import math.jwave.exceptions.JWaveFailure;
 import math.jwave.transforms.FastWaveletTransform;
 import math.jwave.transforms.wavelets.symlets.Symlet5;
 
@@ -35,6 +32,7 @@ public class LenaExample implements OptimizationProblem {
     // private static double[] img_fwt;
 
     private BufferedImage imgBuf;
+    private static Random rng = new Random();
 
     private double lambda = 0.1;
     private DoubleMatrix initX;
@@ -49,11 +47,12 @@ public class LenaExample implements OptimizationProblem {
 
     public static void main(String[] args) {
 
-        JFrame app = new JFrame();
-        LenaExample lenaExample = new LenaExample();
+        // JFrame app = new JFrame();
+        // BufferedImage bufImage = new BufferedImage(width, height,
+        // BufferedImage.TYPE_BYTE_GRAY);
 
+        LenaExample lenaExample = new LenaExample();
         Optimizer optimizer = new GradientAscent(lenaExample.getOptimizer());
-        BufferedImage bufImage = new BufferedImage(width, height, BufferedImage.TYPE_BYTE_GRAY);
         boolean converged = false;
 
         try {
@@ -72,9 +71,9 @@ public class LenaExample implements OptimizationProblem {
 
         int[] revImage = translateToInteger(recoverImage);
 
-        bufImage.setRGB(0, 0, width, height, revImage, 0, width);
-        JLabel label1 = new JLabel(new ImageIcon(bufImage));
-        app.add(label1);
+        // bufImage.setRGB(0, 0, width, height, revImage, 0, width);
+        // JLabel label1 = new JLabel(new ImageIcon(bufImage));
+        // app.add(label1);
     }
 
     public void init() {
@@ -89,7 +88,8 @@ public class LenaExample implements OptimizationProblem {
             width = imgBuf.getWidth();
             height = imgBuf.getHeight();
 
-            img = new DoubleMatrix(translateToDouble(getArray1D(imgBuf)));
+            img = new DoubleMatrix(translateToDouble(filter(imgBuf)));
+
             img_fwt = imgFwt(img);
             initX = project(DoubleMatrix.rand(dimension()));
 
@@ -104,6 +104,75 @@ public class LenaExample implements OptimizationProblem {
 
     public void doFilter() {
 
+    }
+
+    public static int[] filter(BufferedImage src) {
+        int width = src.getWidth();
+        int height = src.getHeight();
+
+        int[] inPixels = new int[width * height];
+        int[] outPixels = new int[width * height];
+        inPixels = getArray1D(src);
+        int index = 0;
+        for (int row = 0; row < height; row++) {
+            int ta = 0, tr = 0, tg = 0, tb = 0;
+            for (int col = 0; col < width; col++) {
+                index = row * width + col;
+                ta = (inPixels[index] >> 24) & 0xff;
+                tr = (inPixels[index] >> 16) & 0xff;
+                tg = (inPixels[index] >> 8) & 0xff;
+                tb = inPixels[index] & 0xff;
+
+                tr = clamp(addGNoise(tr, rng));
+                tg = clamp(addGNoise(tg, rng));
+                tb = clamp(addGNoise(tb, rng));
+
+                outPixels[index] = (ta << 24) | (tr << 16) | (tg << 8) | tb;
+            }
+        }
+
+        return outPixels;
+    }
+
+    public static int addGNoise(int tr, Random random) {
+        int v, ran;
+        boolean inRange = false;
+        do {
+            ran = (int) Math.round(random.nextGaussian() * 50);
+            v = tr + ran;
+            // check whether it is valid single channel value
+            inRange = (v >= 0 && v <= 255);
+            if (inRange)
+                tr = v;
+        } while (!inRange);
+        return tr;
+    }
+
+    public static int clamp(int p) {
+        return p > 255 ? 255 : (p < 0 ? 0 : p);
+    }
+
+    public static int[][] filter(int[] inPixels, int length) {
+        int[][] outPixels = new int[width][height];
+        int index = 0;
+        for (int row = 0; row < height; row++) {
+            int ta = 0, tr = 0, tg = 0, tb = 0;
+            for (int col = 0; col < width; col++) {
+                index = row * width + col;
+                ta = (inPixels[index] >> 24) & 0xff;
+                tr = (inPixels[index] >> 16) & 0xff;
+                tg = (inPixels[index] >> 8) & 0xff;
+                tb = inPixels[index] & 0xff;
+
+                tr = clamp(addGNoise(tr, rng));
+                tg = clamp(addGNoise(tg, rng));
+                tb = clamp(addGNoise(tb, rng));
+
+                outPixels[row][col] = (ta << 24) | (tr << 16) | (tg << 8) | tb;
+            }
+        }
+
+        return outPixels;
     }
 
     /**
