@@ -71,5 +71,22 @@ public class Stock {
   
 	public double getMarketcap() { 
 		return this.marketcap;
-	} 
+	}
+
+	@Override
+	public String toString() {
+		return "Stock{" +
+				"symbol='" + symbol + '\'' +
+				", price=" + price +
+				", volume=" + volume +
+				", pe=" + pe +
+				", eps=" + eps +
+				", week52low=" + week52low +
+				", week52high=" + week52high +
+				", daylow=" + daylow +
+				", dayhigh=" + dayhigh +
+				", movingav50day=" + movingav50day +
+				", marketcap=" + marketcap +
+				'}';
+	}
 }

@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: com.datumbox:libsvm:3.21">
+    <CLASSES>
+      <root url="jar:///opt/repository/com/datumbox/libsvm/3.21/libsvm-3.21.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar:///opt/repository/com/datumbox/libsvm/3.21/libsvm-3.21-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar:///opt/repository/com/datumbox/libsvm/3.21/libsvm-3.21-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
