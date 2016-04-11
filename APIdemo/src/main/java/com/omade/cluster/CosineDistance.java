@@ -11,12 +11,14 @@ import java.util.Enumeration;
 
 /**
  * Created by ping on 16-4-11.
+ * <p>
+ * http://blog.csdn.net/rav009/article/details/12947517
  */
 //public class CosineDistance implements DistanceFunction, OptionHandler, Serializable, RevisionHandler{
 public class CosineDistance extends EuclideanDistance {
 
     public Instances m_Data = null;
-    public String version ="1.0";
+    public String version = "1.0";
 
     @Override
     public double distance(Instance arg0, Instance arg1) {
@@ -49,7 +51,7 @@ public class CosineDistance extends EuclideanDistance {
         normA = 0;
         normB = 0;
 
-        for (int p1 = 0, p2 = 0; p1 < firstNumValues || p2 < secondNumValues;) {
+        for (int p1 = 0, p2 = 0; p1 < firstNumValues || p2 < secondNumValues; ) {
             if (p1 >= firstNumValues)
                 firstI = numAttributes;
             else
@@ -107,14 +109,14 @@ public class CosineDistance extends EuclideanDistance {
 
         //do the post here, don't depends on other functions
         //System.out.println(distance + " " + normA + " "+ normB);
-        distance = distance/Math.sqrt(normA)/Math.sqrt(normB);
-        distance = 1-distance;
-        if(distance < 0 || distance > 1)
+        distance = distance / Math.sqrt(normA) / Math.sqrt(normB);
+        distance = 1 - distance;
+        if (distance < 0 || distance > 1)
             System.err.println("unknown: " + distance);
         return distance;
     }
 
-    public double updateDistance(double currDist, double diff){
+    public double updateDistance(double currDist, double diff) {
         double result;
         result = currDist;
         result += diff;
@@ -122,8 +124,8 @@ public class CosineDistance extends EuclideanDistance {
         return result;
     }
 
-    public double difference(int index, double val1, double val2){
-        switch(m_Data.attribute(index).type()){
+    public double difference(int index, double val1, double val2) {
+        switch (m_Data.attribute(index).type()) {
             case Attribute.NOMINAL:
                 return Double.NaN;
             //break;
@@ -209,14 +211,23 @@ public class CosineDistance extends EuclideanDistance {
         return "Cosine Distance function writtern by Tom, version " + version;
     }
 
-    public static void main(String[] args) throws Exception{
-        String src = "sample.csv";
-        ConverterUtils.DataSource source = new ConverterUtils.DataSource(src);
-        Instances data = source.getDataSet();
+    public static void main(String[] args) throws Exception {
+//        String src = "sample.csv";
+//        ConverterUtils.DataSource source = new ConverterUtils.DataSource(src);
+//        Instances data = source.getDataSet();
+
+        Instances load = WekaMysqlUtil.load();
+
+        load.deleteAttributeType(Attribute.DATE);
+
         CosineDistance cd = new CosineDistance();
-        cd.setInstances(data);
-        System.out.println(cd.distance(data.instance(0), data.instance(1)));
-        System.out.println(cd.distance(data.instance(1), data.instance(2)));
+        cd.setInstances(load);
+//        cd.setInstances(data);
+
+        System.out.println(cd.distance(load.instance(30), load.instance(40)));
+        System.out.println(cd.distance(load.instance(10), load.instance(50)));
+//        System.out.println(cd.distance(data.instance(0), data.instance(1)));
+//        System.out.println(cd.distance(data.instance(1), data.instance(2)));
     }
 
 }
