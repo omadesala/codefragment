@@ -1,5 +1,7 @@
 package com.omade.cluster;
 
+import weka.clusterers.ClusterEvaluation;
+import weka.clusterers.EM;
 import weka.clusterers.SimpleKMeans;
 import weka.core.Attribute;
 import weka.core.DistanceFunction;
@@ -10,8 +12,9 @@ import java.io.File;
 
 /**
  * Created by ping on 16-4-11.
+ * http://blog.csdn.net/zhaoxinfan/article/details/8955254
  */
-public class Kmeans {
+public class EMCluster {
 
 	/**
 	 * @param args
@@ -21,7 +24,8 @@ public class Kmeans {
 		Instances ins = null;
 		Instances tempIns = null;
 
-		SimpleKMeans KM = null;
+		// SimpleKMeans KM = null;
+		EM em = null;
 		DistanceFunction disFun = null;
 		try {
 			/*
@@ -42,24 +46,44 @@ public class Kmeans {
 			 * 2.初始化聚类器 在3.6版本可以通过setDistanceFunction(DistanceFunction df)
 			 * 函数设置聚类算法内部的距离计算方式 而在3.5版本里面默认的采用了欧几里得距离
 			 */
-			KM = new SimpleKMeans();
-			// 设置聚类要得到的类别数量
-			DistanceFunction df = new CosineDistanceMeasure();
-			df.setInstances(ins);
-			KM.setDistanceFunction(df);
-			KM.setNumClusters(12);
+			// KM = new SimpleKMeans();
 
+			// em = new EM();
+			// 设置聚类要得到的类别数量
+			// train clusterer
+			EM clusterer = new EM();
+			// set further options for EM, if necessary...
+			String[] options = new String[4];
+
+			// max. iterations
+			options[0] = "-I";
+			options[1] = "100";
+			// set cluseter numbers
+			options[2] = "-N";
+			options[3] = "12";
+
+			clusterer.setOptions(options);
+			clusterer.buildClusterer(ins);
+
+			System.out.println("ret: " + clusterer.toString());
+
+			// evaluate clusterer
+			// ClusterEvaluation eval = new ClusterEvaluation();
+			// eval.setClusterer(clusterer);
+			// eval.evaluateClusterer(data);
+
+			// print results
+			// System.out.println(eval.clusterResultsToString());
 			/*
 			 * 3.使用聚类算法对样本进行聚类
 			 */
-			KM.buildClusterer(ins);
-			System.out.println("trainning finished !");
+			// KM.buildClusterer(ins);
 
 			/*
 			 * 4.打印聚类结果
 			 */
-			tempIns = KM.getClusterCentroids();
-			System.out.println("CentroIds: " + tempIns);
+			// tempIns = KM.getClusterCentroids();
+			// System.out.println("CentroIds: " + tempIns);
 
 		} catch (Exception e) {
 			e.printStackTrace();
