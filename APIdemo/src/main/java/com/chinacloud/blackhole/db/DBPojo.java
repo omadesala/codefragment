@@ -68,7 +68,7 @@ public class DBPojo implements Serializable {
         return tableName;
     }
 
-    public void setName(String name) {
+    public void setTableName(String name) {
         this.tableName = name;
     }
 

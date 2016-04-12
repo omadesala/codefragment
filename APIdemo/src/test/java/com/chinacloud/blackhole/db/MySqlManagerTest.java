@@ -25,7 +25,7 @@ public class MySqlManagerTest {
         db.setInstance("stocks");
         db.setIp("localhost");
         db.setPort("3306");
-        db.setName("test");
+        db.setTableName("test");
         db.setPwd("123456");
 
         db.setUser("root");
