@@ -15,3 +15,4 @@ BEGIN
 		set i = i + 1;
 	end while;
 END #
+delimiter ;

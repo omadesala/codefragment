@@ -10,6 +10,8 @@ import weka.core.converters.ArffLoader;
 
 import java.io.File;
 
+import com.omade.utils.WekaMysqlUtil;
+
 /**
  * Created by ping on 16-4-11.
  * http://blog.csdn.net/zhaoxinfan/article/details/8955254

@@ -7,82 +7,82 @@ import java.sql.SQLException;
 
 public class MySqlManager {
 
-    // MySqlManager
-    public static final String MYSQL = "mysql";
+	// MySqlManager
+	public static final String MYSQL = "mysql";
 
-    // private static Log log = LogFactory.getLog(MySqlManager.class);
+	// private static Log log = LogFactory.getLog(MySqlManager.class);
 
-    private DBPojo db;
-    private Connection conn = null;
-    private PreparedStatement statement = null;
+	private DBPojo db;
+	private Connection conn = null;
+	private PreparedStatement statement = null;
 
-    public MySqlManager(DBPojo db) {
-        this.db = db;
-    }
+	public MySqlManager(DBPojo db) {
+		this.db = db;
+	}
 
-    public void Connection() throws SQLException, ClassNotFoundException {
+	public void Connection() throws SQLException, ClassNotFoundException {
 
-        ConnectionFactory cf = null;
+		ConnectionFactory cf = null;
 
-        switch (this.db.getDbtype()) {
-        case MYSQL:
-            cf = new MySqlConnectionFactory();
-            break;
-        default:
-            break;
-        }
+		switch (this.db.getDbtype()) {
+		case MYSQL:
+			cf = new MySqlConnectionFactory();
+			break;
+		default:
+			break;
+		}
 
-        this.conn = cf.getDBConnection(this.db);
+		this.conn = cf.getDBConnection(this.db);
 
-    }
+	}
 
-    public ResultSet QuerySQL(String sql) {
-        ResultSet rs = null;
-        try {
-            this.statement = this.conn.prepareStatement(sql);
-            rs = this.statement.executeQuery();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+	public ResultSet QuerySQL(String sql) {
+		ResultSet rs = null;
+		try {
+			this.statement = this.conn.prepareStatement(sql);
+			rs = this.statement.executeQuery();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 
-        return rs;
-    }
+		return rs;
+	}
 
-    public boolean executeSQL(String sql) {
-        try {
+	public boolean executeSQL(String sql) {
+		try {
 
-            this.statement = this.conn.prepareStatement(sql);
-            this.statement.executeUpdate();
-            return true;
-        } catch (SQLException e) {
-            // log.info("-- Error: Insert database failed!");
-            e.printStackTrace();
-            System.out.println("executeSQL exception: " + e.getMessage());
-        }
+			this.statement = this.conn.prepareStatement(sql);
+			this.statement.executeUpdate();
+			return true;
+		} catch (SQLException e) {
+			// log.info("-- Error: Insert database failed!");
+			e.printStackTrace();
+			System.out.println("executeSQL exception: " + e.getMessage());
+		}
 
-        return false;
-    }
+		return false;
+	}
 
-    public void closeStatement() {
-        try {
-            if (this.statement != null) {
-                this.statement.close();
-            }
-        } catch (Exception e) {
-            // log.info("-- Error: close statement failed!");
-            e.printStackTrace();
-        }
-    }
+	public void closeStatement() {
+		try {
+			if (this.statement != null) {
+				this.statement.close();
+			}
+		} catch (Exception e) {
+			// log.info("-- Error: close statement failed!");
+			e.printStackTrace();
+		}
+	}
 
-    public void closeConnection() {
-        try {
-            if (this.conn != null) {
-                this.conn.close();
-            }
-        } catch (Exception e) {
-            // log.info("-- Error: Deconnect database failed!");
-            e.printStackTrace();
-        }
-    }
+	public void closeConnection() {
+		try {
+			if (this.conn != null) {
+				this.conn.close();
+			}
+		} catch (Exception e) {
+			// log.info("-- Error: Deconnect database failed!");
+			e.printStackTrace();
+		}
+	}
 
 }

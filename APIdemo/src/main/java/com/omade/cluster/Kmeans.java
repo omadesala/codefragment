@@ -1,5 +1,7 @@
 package com.omade.cluster;
 
+import weka.clusterers.ClusterEvaluation;
+import weka.clusterers.EM;
 import weka.clusterers.SimpleKMeans;
 import weka.core.Attribute;
 import weka.core.DistanceFunction;
@@ -7,6 +9,8 @@ import weka.core.Instances;
 import weka.core.converters.ArffLoader;
 
 import java.io.File;
+
+import com.omade.utils.WekaMysqlUtil;
 
 /**
  * Created by ping on 16-4-11.
@@ -23,6 +27,7 @@ public class Kmeans {
 
 		SimpleKMeans KM = null;
 		DistanceFunction disFun = null;
+		ClusterEvaluation eval = new ClusterEvaluation();
 		try {
 			/*
 			 * 1.读入样本
@@ -35,7 +40,7 @@ public class Kmeans {
 
 			ins = WekaMysqlUtil.load();
 
-			ins.deleteAttributeType(Attribute.DATE);
+			// ins.deleteAttributeType(Attribute.DATE);
 			// ins.
 
 			/*
@@ -45,9 +50,12 @@ public class Kmeans {
 			KM = new SimpleKMeans();
 			// 设置聚类要得到的类别数量
 			DistanceFunction df = new CosineDistanceMeasure();
-			df.setInstances(ins);
+			// df.setInstances(ins);
 			KM.setDistanceFunction(df);
-			KM.setNumClusters(12);
+			KM.setNumClusters(10);
+			KM.setDisplayStdDevs(true);
+			// KM.setSeed(10);
+			KM.setPreserveInstancesOrder(true);
 
 			/*
 			 * 3.使用聚类算法对样本进行聚类
@@ -60,6 +68,23 @@ public class Kmeans {
 			 */
 			tempIns = KM.getClusterCentroids();
 			System.out.println("CentroIds: " + tempIns);
+
+			int[] assignments = KM.getAssignments();
+			int i = 0;
+			for (int clusterNum : assignments) {
+				System.out.println("Instance " + i + " -> Cluster "
+						+ clusterNum);
+				i++;
+			}
+			//
+			// eval.setClusterer(KM); // the cluster to evaluate
+			// eval.evaluateClusterer(ins); // data to evaluate the clusterer
+			// // on
+			// System.out.println("# of clusters: " + eval.getNumClusters()); //
+			// output
+			// #
+			// of
+			// clusters
 
 		} catch (Exception e) {
 			e.printStackTrace();

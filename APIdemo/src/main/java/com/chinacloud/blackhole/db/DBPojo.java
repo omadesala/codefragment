@@ -64,7 +64,7 @@ public class DBPojo implements Serializable {
         this.pwd = pwd;
     }
 
-    public String getName() {
+    public String getTableName() {
         return tableName;
     }
 
