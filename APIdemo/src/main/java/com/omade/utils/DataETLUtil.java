@@ -17,11 +17,13 @@ public class DataETLUtil {
 		DBPojo db = new DBPojo();
 		db.setDbtype("mysql");
 		db.setInstance("stocks");
-		db.setIp("172.16.50.80");
+//		db.setIp("172.16.50.80");
+		db.setIp("localhost");
 		db.setPort("3306");
 		db.setTableName("600000SS");
 		db.setUser("root");
-		db.setPwd("hadoop");
+		db.setPwd("root");
+//		db.setPwd("hadoop");
 
 		MySqlManager mySqlManager = new MySqlManager(db);
 		try {

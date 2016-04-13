@@ -25,11 +25,11 @@ public class MatrixUtils {
     }
 
     /**
-     * @Title: getMatrix
-     * @Description: get the input point as the column matrix such as N x 1
      * @param input data point
      * @return Matrix Column is one ,and arrow is N, N is the size of input
      * @throws
+     * @Title: getMatrix
+     * @Description: get the input point as the column matrix such as N x 1
      */
     public static Matrix getPointOfMatrix(Vector<Double> input) {
 
@@ -66,12 +66,12 @@ public class MatrixUtils {
     }
 
     /**
-     * @Title: getMatrixColumn
-     * @Description: get the k-th column form input matrix
-     * @param input input matrix
+     * @param input       input matrix
      * @param columnIndex column index
      * @return Matrix 返回类型
      * @throws
+     * @Title: getMatrixColumn
+     * @Description: get the k-th column form input matrix
      */
     public static Matrix getMatrixColumn(Matrix input, int columnIndex) {
 
@@ -139,6 +139,42 @@ public class MatrixUtils {
 
         return element;
 
+    }
+
+    public static Double getMaxElement(Matrix data) {
+
+        Preconditions.checkNotNull(data);
+
+        int columnDimension = data.getColumnDimension();
+        int rowDimension = data.getRowDimension();
+        double max = Double.MIN_VALUE;
+
+        for (int i = 0; i < rowDimension; i++) {
+            for (int j = 0; j < columnDimension; j++) {
+                if (data.get(i, j) > max) {
+                    max = data.get(i, j);
+                }
+            }
+        }
+        return max;
+    }
+
+    public static double getMinElement(Matrix data) {
+
+        Preconditions.checkNotNull(data);
+
+        int columnDimension = data.getColumnDimension();
+        int rowDimension = data.getRowDimension();
+        double min = Double.MAX_VALUE;
+
+        for (int i = 0; i < rowDimension; i++) {
+            for (int j = 0; j < columnDimension; j++) {
+                if (data.get(i, j) < min) {
+                    min = data.get(i, j);
+                }
+            }
+        }
+        return min;
     }
 
     public static Double getColumnMatrixElementAt(Matrix colMat, Integer index) {
@@ -261,13 +297,13 @@ public class MatrixUtils {
     }
 
     /**
-     * @Title: getCovarianceMatrix
-     * @Description: return the covariance matrix
-     * @param @param matrix col is the number of data ,row is the dimension of
-     *        each data point
+     * @param @param  matrix col is the number of data ,row is the dimension of
+     *                each data point
      * @param @return
      * @return Matrix ��������
      * @throws
+     * @Title: getCovarianceMatrix
+     * @Description: return the covariance matrix
      */
     public static Matrix getCovarianceMatrix(Matrix matrix) {
 
@@ -663,6 +699,27 @@ public class MatrixUtils {
 
         Preconditions.checkArgument(size > 0, "size  should greate than zero ");
         Matrix vector = new Matrix(1, size);
+
+        return vector;
+    }
+
+    public static Matrix newNatureRow(int size) {
+
+        Preconditions.checkArgument(size > 0, "size  should greate than zero ");
+        Matrix vector = new Matrix(1, size);
+
+        for (int i = 0; i < size; i++) {
+            vector.set(0, i, i);
+        }
+
+        return vector;
+    }
+
+    public static Matrix randomRow(int size) {
+
+        Preconditions.checkArgument(size > 0, "size  should greate than zero ");
+//        Matrix vector = new Matrix(1, size);
+        Matrix vector = Matrix.random(1, size);
 
         return vector;
     }
