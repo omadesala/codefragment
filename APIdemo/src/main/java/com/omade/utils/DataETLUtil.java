@@ -8,7 +8,9 @@ import java.util.List;
 import com.chinacloud.blackhole.db.DBPojo;
 import com.chinacloud.blackhole.db.MySqlManager;
 import com.google.common.base.Joiner;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
+import com.nhefner.main.StockHistory;
 
 public class DataETLUtil {
 
@@ -17,13 +19,13 @@ public class DataETLUtil {
 		DBPojo db = new DBPojo();
 		db.setDbtype("mysql");
 		db.setInstance("stocks");
-//		db.setIp("172.16.50.80");
-		db.setIp("localhost");
+		db.setIp("172.16.50.80");
+		// db.setIp("localhost");
 		db.setPort("3306");
-		db.setTableName("600000SS");
+		// db.setTableName("600000SS");
 		db.setUser("root");
-		db.setPwd("root");
-//		db.setPwd("hadoop");
+		// db.setPwd("root");
+		db.setPwd("hadoop");
 
 		MySqlManager mySqlManager = new MySqlManager(db);
 		try {
@@ -74,7 +76,48 @@ public class DataETLUtil {
 		dbManager.closeConnection();
 	}
 
-	public static void save() {
+	public static void save(List<StockHistory> data) {
+
+		Preconditions.checkArgument(data != null && data.size() > 0);
+
+		MySqlManager dbManager = DataETLUtil.getDBManager();
+		String symbol = data.get(0).getSymbol();
+		String droptable = "drop table if exists " + symbol;
+		dbManager.executeSQL(droptable);
+		String sql = "CREATE TABLE "
+				+ symbol
+				+ " ( date date DEFAULT NULL, open double DEFAULT NULL,  high double DEFAULT NULL,  low double DEFAULT NULL,  close double DEFAULT NULL,  volume double DEFAULT NULL,  adjclose double DEFAULT NULL) ENGINE=InnoDB DEFAULT CHARSET=utf8";
+
+		System.out.println("create sql : " + sql);
+
+		dbManager.executeSQL(sql);
+
+		StringBuffer insertsql = new StringBuffer();
+		insertsql
+				.append("insert into ")
+				.append(symbol)
+				.append("( date, open,  high ,  low,  close,  volume,  adjclose)")
+				.append(" values");
+
+		List<String> values = Lists.newArrayList();
+		for (StockHistory item : data) {
+
+			StringBuffer sb = new StringBuffer();
+			sb.append("('").append(item.getDate()).append("',")
+					.append(item.getOpen()).append(",").append(item.getHigh())
+					.append(",").append(item.getLow()).append(",")
+					.append(item.getClose()).append(",")
+					.append(item.getVolume()).append(",")
+					.append(item.getAdjclose()).append(")");
+
+			values.add(sb.toString());
+		}
+
+		String joinValues = Joiner.on(",").join(values);
+		insertsql.append(joinValues);
+
+		System.out.println("insert sql : " + insertsql.toString());
+		dbManager.executeSQL(insertsql.toString());
 
 	}
 

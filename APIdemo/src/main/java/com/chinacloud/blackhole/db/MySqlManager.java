@@ -58,9 +58,8 @@ public class MySqlManager {
 			// log.info("-- Error: Insert database failed!");
 			e.printStackTrace();
 			System.out.println("executeSQL exception: " + e.getMessage());
+			throw new IllegalStateException(e.getMessage());
 		}
-
-		return false;
 	}
 
 	public void closeStatement() {
