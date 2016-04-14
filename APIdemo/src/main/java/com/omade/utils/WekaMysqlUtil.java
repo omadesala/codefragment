@@ -14,11 +14,11 @@ public class WekaMysqlUtil {
 		try {
 			query = new InstanceQuery();
 			query.setUsername("root");
-			// query.setPassword("root");
-			query.setPassword("hadoop");
+			 query.setPassword("root");
+//			query.setPassword("hadoop");
 			query.setQuery("select * from 600000SS11");
-			// query.setDatabaseURL("jdbc:mysql://localhost:3306/stocks?characterEncoding=UTF8");
-			query.setDatabaseURL("jdbc:mysql://172.16.50.80:3306/stocks?characterEncoding=UTF8");
+			 query.setDatabaseURL("jdbc:mysql://localhost:3306/stocks?characterEncoding=UTF8");
+//			query.setDatabaseURL("jdbc:mysql://172.16.50.80:3306/stocks?characterEncoding=UTF8");
 			Instances data = query.retrieveInstances();
 			return data;
 		} catch (Exception e) {
