@@ -10,7 +10,7 @@ import weka.core.converters.ArffLoader;
 
 import java.io.File;
 
-import com.omade.utils.WekaMysqlUtil;
+import com.omade.utils.WekaUtil;
 
 /**
  * Created by ping on 16-4-11.
@@ -39,7 +39,7 @@ public class EMCluster {
 			// loader.setFile(file);
 			// ins = loader.getDataSet();
 
-			ins = WekaMysqlUtil.load();
+			ins = WekaUtil.load();
 
 			ins.deleteAttributeType(Attribute.DATE);
 			// ins.

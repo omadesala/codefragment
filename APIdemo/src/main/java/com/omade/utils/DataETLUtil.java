@@ -43,22 +43,47 @@ public class DataETLUtil {
 
 		MySqlManager dbManager = DataETLUtil.getDBManager();
 
-		// ResultSet querySQL = dbManager.QuerySQL("select * from " + tableName
-		// + " limit 1");
+		String droptable = "drop table if exists " + dstTableName;
+		dbManager.executeSQL(droptable);
+		StringBuffer sql = new StringBuffer();
+
+		sql.append("CREATE TABLE ").append(dstTableName).append("(");
+
+		List<String> colName = Lists.newArrayList();
+		for (int i = 0; i < window; i++) {
+			if (i != window - 1)
+				colName.add("p" + (i + 1) + " double");
+			else
+				colName.add("target double");
+		}
+		sql.append(Joiner.on(",").join(colName)).append(")");
+
+		System.out.println("create table sql : " + sql.toString());
+
+		dbManager.executeSQL(sql.toString());
+
 		ResultSet querySQL = dbManager.QuerySQL("select count(*) from "
 				+ srctableName);
 		List<List<String>> rows = DataETLUtil.getRows(querySQL);
 		int count = Integer.parseInt(rows.get(0).get(0));
 
-		// for (int j = 0; j < count - window; j++) {
 		StringBuffer sb = new StringBuffer();
-		sb.append("insert into 600000SS11(p1,p2,p3,p4,p5,p6,p7,p8,p9,p10,target)  values ");
+		sb.append("insert into ").append(dstTableName).append("(");
+		List<String> values = Lists.newArrayList();
+		for (int i = 0; i < window; i++) {
+			if (i != window - 1)
+				values.add("p" + (i + 1));
+			else
+				values.add("target");
+		}
+		sb.append(Joiner.on(",").join(values)).append(") values ");
 
 		for (int j = 0, len = count - window; j < len; j++) {
-			String sql = "select close from " + srctableName + " limit " + j
-					+ "," + (window + 1);
-			System.out.println("sql : " + sql);
-			ResultSet rs = dbManager.QuerySQL(sql);
+
+			String selectsql = "select close from " + srctableName + " limit "
+					+ j + "," + (window + 1);
+			System.out.println("sql : " + selectsql);
+			ResultSet rs = dbManager.QuerySQL(selectsql);
 			List<List<String>> datarows = DataETLUtil.getRows(rs);
 
 			sb.append("(");
@@ -127,7 +152,10 @@ public class DataETLUtil {
 
 	public static void main(String[] args) {
 
-		clean("600000SS", "600000SS11", 10);
+		// clean("600000SS", "600000SS11", 10);
+		String tableName = "IBM";
+		int interval = 10;
+		clean(tableName, tableName + "11", interval);
 	}
 
 	public static List<List<String>> getRows(ResultSet rs) {

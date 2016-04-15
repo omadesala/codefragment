@@ -16,15 +16,18 @@ public class DataCrawler {
 
 		List<String> symbols = Lists.newArrayList();
 		symbols.add("IBM");
-		start(symbols);
+		DateTime start = new DateTime("2011-01-01");
+		DateTime end = new DateTime("2014-01-01");
+
+		for (String symbol : symbols) {
+			start(symbols, start, end);
+		}
 
 	}
 
-	public static void start(List<String> symbols) {
+	public static void start(List<String> symbols, DateTime start, DateTime end) {
 
 		try {
-			DateTime start = new DateTime("2012-01-01");
-			DateTime end = new DateTime("2013-01-01");
 			for (String symbol : symbols) {
 
 				List<StockHistory> history = StockFetcher.getStockHistory(
@@ -32,7 +35,6 @@ public class DataCrawler {
 				DataETLUtil.save(history);
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 

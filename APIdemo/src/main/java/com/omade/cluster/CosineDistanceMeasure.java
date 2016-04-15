@@ -6,7 +6,7 @@ package com.omade.cluster;
 
 import java.util.Enumeration;
 
-import com.omade.utils.WekaMysqlUtil;
+import com.omade.utils.WekaUtil;
 
 import weka.core.Attribute;
 import weka.core.EuclideanDistance;
@@ -303,7 +303,7 @@ public class CosineDistanceMeasure extends EuclideanDistance {
 
 	public static void main(String[] args) throws Exception {
 
-		Instances load = WekaMysqlUtil.load();
+		Instances load = WekaUtil.load();
 
 		CosineDistanceMeasure cd = new CosineDistanceMeasure();
 		cd.setInstances(load);
