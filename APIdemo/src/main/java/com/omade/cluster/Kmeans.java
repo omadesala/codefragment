@@ -29,77 +29,89 @@ import com.omade.utils.WekaUtil;
  */
 public class Kmeans {
 
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
+    /**
+     * @param args
+     */
+    public static void main(String[] args) {
 
-		List<Instances> train = train(WekaUtil.load(),
-				new CosineDistanceMeasure(), 10);
-		// show(train);
-	}
+//        String tableName = "IBM11";
+        String tableName = "IBM11Norm";
+        List<Instances> train = train(WekaUtil.load(tableName),
+                new CosineDistanceMeasure(), 5);
+        show(train);
+    }
 
-	/**
-	 * The last one is the Centroid
-	 * 
-	 * @param data
-	 * @param disFun
-	 * @param clusterNumber
-	 * @return
-	 */
-	public static List<Instances> train(Instances data,
-			DistanceFunction disFun, int clusterNumber) {
+    /**
+     * The last one is the Centroid
+     *
+     * @param data
+     * @param disFun
+     * @param clusterNumber
+     * @return
+     */
+    public static List<Instances> train(Instances data,
+                                        DistanceFunction disFun, int clusterNumber) {
 
-		List<Instances> rets = Lists.newArrayList();
-		SimpleKMeans KM = new SimpleKMeans();
-		Random random = new Random(1000);
-		// ClusterEvaluation eval = new ClusterEvaluation();
+        List<Instances> rets = Lists.newArrayList();
+        SimpleKMeans KM = new SimpleKMeans();
+        Random random = new Random(1000);
 
-		try {
-			// shuffle
-			data.randomize(random);
-			KM.setNumClusters(11);
-			// KM.setInitializationMethod(null);
-			KM.setDistanceFunction(disFun);
-			KM.setDisplayStdDevs(true);
-			// KM.setSeed(10);
-			KM.setPreserveInstancesOrder(true);
 
-			KM.buildClusterer(data);
+        // ClusterEvaluation eval = new ClusterEvaluation();
 
-			System.out.println("trainning finished !");
-			int numClusters = KM.getNumClusters();
-			Instances clusterCentroids = KM.getClusterCentroids();
-			for (int i = 0; i < numClusters; i++) {
-				rets.add(new Instances(data, 0));
-			}
+        try {
+            // shuffle
+            data.randomize(random);
+            KM.setNumClusters(clusterNumber);
+            // KM.setInitializationMethod(null);
+            KM.setDistanceFunction(disFun);
+            KM.setDisplayStdDevs(true);
+            // KM.setSeed(10);
+            KM.setPreserveInstancesOrder(true);
 
-			System.out.println("cluster num:" + numClusters);
-			System.out.println("CentroIds: " + clusterCentroids);
+            KM.buildClusterer(data);
 
-			int[] assignments = KM.getAssignments();
-			for (int i = 0, len = assignments.length; i < len; i++) {
-				Instance instance = data.get(i);
-				rets.get(assignments[i]).add(instance);
-			}
-			rets.add(clusterCentroids);
+            System.out.println("trainning finished !");
+            int numClusters = KM.getNumClusters();
+            Instances clusterCentroids = KM.getClusterCentroids();
+            for (int i = 0; i < numClusters; i++) {
+                rets.add(new Instances(data, 0));
+            }
 
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+            System.out.println("cluster num:" + numClusters);
+            System.out.println("CentroIds: " + clusterCentroids);
 
-		return rets;
-	}
+            int[] assignments = KM.getAssignments();
+            for (int i = 0, len = assignments.length; i < len; i++) {
+                Instance instance = data.get(i);
+                rets.get(assignments[i]).add(instance);
+            }
+            rets.add(clusterCentroids);
 
-	public static void show(List<Instances> data) {
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-		Preconditions.checkArgument(data != null && data.size() > 0);
+        return rets;
+    }
 
-		for (Instances instances : data) {
-			Matrix oneCluster = WekaUtil.getMatrix(instances);
-			JavaGNUplot.showDataArray("cluster size", "order", "size",
-					oneCluster.transpose());
-		}
-	}
+    public static void show(List<Instances> data) {
+
+        Preconditions.checkArgument(data != null && data.size() > 0);
+
+        int clusterNum = data.size();
+        for (int i = 0; i < clusterNum; i++) {
+
+            Matrix oneCluster = WekaUtil.getMatrix(data.get(i));
+            if (i != clusterNum - 1) {
+                JavaGNUplot.showDataArray("clustered data draw" + oneCluster.getRowDimension() + "points", "time", "price",
+                        oneCluster.transpose());
+            } else {
+                JavaGNUplot.showDataArray("centrio draw", "times", "price",
+                        oneCluster.transpose());
+
+            }
+        }
+    }
 
 }
